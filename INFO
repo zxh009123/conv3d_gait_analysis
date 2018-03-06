@@ -1,0 +1,15 @@
+model        6-layer conv3d        C3D            C3D-with-crop
+input-size      5*240*160        14*240*160        14*112*112
+optimizer        adam               adam            adam/SGD
+loss          cross entropy     cross-entropy    cross-entropy
+initial LR        1e-5              1e-6            1e-6/3e-6
+LR-decay          0.9(power decay)  0.95(power decay) 0.96/0.96(momentum=0.9, power decay)
+batch_size        32                 8                 8 
+epoch             40                 50              50/90
+validate_val     93.89%              -                 -
+EER                -               0.2258            0.2389
+object            119                119              119
+archietecture   model.png       C3D_model.png     C3D_model2.png
+
+
+(note: each object has 5 gallery and 1 probe. Each clip of video has been oversampling to 77 frames. For calculating the EER. First 80 objects has been used for training and the rest 39 object has been used for testing)

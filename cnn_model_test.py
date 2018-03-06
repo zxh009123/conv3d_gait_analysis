@@ -9,11 +9,8 @@ from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 # constants and parameters
 LAYER_HEIGHT = 5
 LAYER_WIDTH = 240
-LAYER_LENGTH = 160
+LAYER_LENGTH = 300
 NUM_CLASS = 119
-
-def zero_loss(y_true, y_pred):
-	return 0.5 * K.sum(y_pred, axis=0)
 
 def cnn_model():
 	adam = Adam()
@@ -24,9 +21,9 @@ def cnn_model():
 	#model.add(Dropout(0.25))
 	model.add(MaxPooling3D(pool_size=(2, 2, 2), padding='same'))
 
-	# conv2
+	#conv2
 	model.add(Conv3D(32, (2,2,2), strides=(1, 1, 1), padding='valid', dilation_rate=(1, 1, 1), activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros'))
-	# model.add(Dropout(0.25))
+	#model.add(Dropout(0.25))
 	model.add(MaxPooling3D(pool_size=(2, 2, 2), padding='same'))
 
 	#conv3
@@ -38,15 +35,10 @@ def cnn_model():
 	model.add(Conv3D(128, (2,2,2), strides=(1, 1, 1), padding='same', data_format = 'channels_last', dilation_rate=(1, 1, 1), activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros'))
 	model.add(Dropout(0.25))
 	model.add(MaxPooling3D(pool_size=(2, 2, 2), padding='same'))
-
+	
 	#conv5 => 10*8*256
 	model.add(Conv3D(256, (2,2,2), strides=(1, 1, 1), padding='same', data_format = 'channels_last', dilation_rate=(1, 1, 1), activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros'))
-	model.add(Dropout(0.5))
-	model.add(MaxPooling3D(pool_size=(2, 2, 2), padding='same'))
-	
-	#conv6 => 5*4*512
-	model.add(Conv3D(512, (2,2,2), strides=(1, 1, 1), padding='same', data_format = 'channels_last', dilation_rate=(1, 1, 1), activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros'))
-	model.add(Dropout(0.5))
+	model.add(Dropout(0.25))
 	model.add(MaxPooling3D(pool_size=(2, 2, 2), padding='same'))
 	
 	#fully connected
@@ -54,12 +46,10 @@ def cnn_model():
 	#fully connected => 1024
 	model.add(Dense(1024, activation='relu'))
 	#fully connected => 256
-	x = model.add(Dense(512, activation='relu'))
+	model.add(Dense(512, activation='relu'))
 	#softmax => 119
-	model.add(Dense(NUM_CLASS, activation='softmax'))
-	model.compile(loss=[keras.losses.categorical_crossentropy],
+	# model.add(Dense(NUM_CLASS, activation='softmax'))
+	model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=adam,
               metrics=['accuracy'])
-
-
-	return model, adam
+	return model
